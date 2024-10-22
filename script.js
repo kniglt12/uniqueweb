@@ -4,7 +4,9 @@ let num = 0;
 let step = 0;
 let now = 0;
 let working = 0;
-//显示输入的数
+let stateStack = []; // 用于保存每一步的状态
+
+// 显示输入的数
 const elements = document.querySelectorAll('.element');
 const nodes = document.querySelectorAll('.node');
 const lens = document.querySelectorAll('.line');
@@ -18,6 +20,7 @@ function init() {
     now = 0;
     step = 0;
     working = 0;
+    stateStack = []; // 初始化时清空状态栈
     elements.forEach((element, index) => {
         if (index < numbers.length) {
             element.style.display = 'block';
@@ -37,13 +40,61 @@ function init() {
     });
 }
 
+function saveState() {
+    const state = {
+        now: now,
+        step: step,
+        elements: Array.from(elements).map(element => ({
+            textContent: element.textContent,
+            visibility: element.style.visibility,
+            backgroundColor: element.style.backgroundColor,
+            transform: element.style.transform,
+            transition: element.style.transition
+        })),
+        nodes: Array.from(nodes).map(node => ({
+            textContent: node.textContent,
+            visibility: node.style.visibility,
+            backgroundColor: node.style.backgroundColor,
+            transform: node.style.transform,
+            transition: node.style.transition
+        })),
+        lens: Array.from(lens).map(line => ({
+            visibility: line.style.visibility
+        }))
+    };
+    stateStack.push(state);
+}
+
+function restoreState() {
+    if (stateStack.length === 0) return;
+    const state = stateStack.pop();
+    now = state.now;
+    step = state.step;
+    state.elements.forEach((elementState, index) => {
+        elements[index].textContent = elementState.textContent;
+        elements[index].style.visibility = elementState.visibility;
+        elements[index].style.backgroundColor = elementState.backgroundColor;
+        elements[index].style.transform = elementState.transform;
+        elements[index].style.transition = elementState.transition;
+    });
+    state.nodes.forEach((nodeState, index) => {
+        nodes[index].textContent = nodeState.textContent;
+        nodes[index].style.visibility = nodeState.visibility;
+        nodes[index].style.backgroundColor = nodeState.backgroundColor;
+        nodes[index].style.transform = nodeState.transform;
+        nodes[index].style.transition = nodeState.transition;
+    });
+    state.lens.forEach((lineState, index) => {
+        lens[index].style.visibility = lineState.visibility;
+    });
+}
+
 async function swapWithAnimation(i, j) {
     return new Promise(resolve => {
         const rectI = nodes[i].getBoundingClientRect();
         const rectJ = nodes[j].getBoundingClientRect();
         const deltaX = rectJ.left - rectI.left;
         const deltaY = rectJ.top - rectI.top;
-        // console.log(i, j);
         nodes[i].style.transition = 'transform 0.5s';
         nodes[j].style.transition = 'transform 0.5s';
         nodes[i].style.transform = `translate(${deltaX}px, ${deltaY}px)`;
@@ -69,7 +120,7 @@ async function up(j) {
     if (j == 0) return;
     let k = Math.floor((j - 1) / 2);
     if (parseInt(nodes[j].textContent) > parseInt(nodes[k].textContent)) {
-        await (delay(1));
+        await delay(1);
         await swapWithAnimation(k, j);
         await up(k);
     }
@@ -80,7 +131,7 @@ async function down(j) {
     if (k >= now) return;
     if (k + 1 < now && parseInt(nodes[k].textContent) < parseInt(nodes[k + 1].textContent)) k++;
     if (parseInt(nodes[j].textContent) < parseInt(nodes[k].textContent)) {
-        await (delay(1));
+        await delay(1);
         await swapWithAnimation(j, k);
         await down(k);
     }
@@ -90,8 +141,8 @@ async function fixTree() {
     for (let i = num - 1; i >= 0; i--) {
         await up(i);
     }
-    console.log('fixTree');
 }
+
 async function move2(now) {
     return new Promise(resolve => {
         // 获取元素和节点的位置
@@ -103,14 +154,13 @@ async function move2(now) {
         const deltaY = elementRect.top - nodeRect.top;
 
         // 设置动画
-        // console.log('move 2');
         nodes[now].style.transition = 'transform 0.5s';
         nodes[now].style.transform = `translate(${deltaX}px, ${deltaY}px)`;
         if (now > 0) lens[now - 1].style.visibility = 'hidden';
         nodes[now].style.backgroundColor = 'green';
+
         // 在动画完成后执行
         nodes[now].addEventListener('transitionend', () => {
-            // console.log('move2');
             elements[now].textContent = nodes[now].textContent;
             elements[now].style.visibility = 'visible';
             elements[now].style.backgroundColor = 'green';
@@ -122,16 +172,13 @@ async function move2(now) {
         }, { once: true });
     });
 }
+
 async function getMax() {
     if (now == 0) {
         await move2(0);
         return;
     }
     await swapWithAnimation(0, now);
-    // if (now > 0) lens[now - 1].style.visibility = 'hidden';
-    // nodes[now].style.visibility = 'hidden';
-    // elements[now].textContent = nodes[now].textContent;
-    // elements[now].style.visibility = 'visible';
     await delay(1);
     await move2(now);
     await delay(1);
@@ -149,8 +196,9 @@ async function move1(now) {
         const deltaX = nodeRect.left - elementRect.left;
         const deltaY = nodeRect.top - elementRect.top;
         elements[now].style.backgroundColor = 'red';
+
         // 设置动画
-        elements[now].style.transition = 'transform 0.5s';
+        elements[now].style.transition = 'transform 0.3s';
         elements[now].style.transform = `translate(${deltaX}px, ${deltaY}px)`;
 
         // 在动画完成后执行
@@ -165,6 +213,7 @@ async function move1(now) {
         }, { once: true });
     });
 }
+
 async function makeTree() {
     if (now < num) {
         await move1(now);
@@ -172,7 +221,6 @@ async function makeTree() {
     } else {
         sta = 1;
         now--;
-
         return;
     }
     await makeTree();
@@ -194,33 +242,46 @@ async function main() {
 
     document.querySelector('#start').addEventListener('click', async () => {
         init();
-
         document.querySelector('#next').addEventListener('click', async () => {
             if (working) return;
 
             working = 1;
             if (step == 0) {
+                saveState();
                 await makeTree();
+
                 working = 0;
                 step = 1;
+
             }
             else if (step == 1) {
-
+                saveState();
                 await fixTree();
+
                 working = 0;
                 step = 2;
+
             }
             else if (step >= 2) {
+                saveState();
                 if (now < 0) {
                     working = 0;
                     step = -1;
                     return;
                 }
                 await getMax();
+
                 working = 0;
                 step++;
+
             }
         });
+
+        document.querySelector('#prev').addEventListener('click', async () => {
+            if (working) return;
+            restoreState(); // 恢复上一步状态
+        });
+
         document.querySelector('#reset').addEventListener('click', async () => {
             if (working) return;
             init();
