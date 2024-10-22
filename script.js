@@ -22,11 +22,33 @@ function init() {
     });
 
 }
+async function up(j) {
+    nodes[j].style.color = 'white';
+    // console.log(j);
+    if (j == 0) return;
+    let k = Math.floor((j - 1) / 2);
+    // console.log(nodes[j].textContent, nodes[k].textContent);
+    if (parseInt(nodes[j].textContent) > parseInt(nodes[k].textContent)) {
+        // console.log('swap');
+        let temp = nodes[j].textContent;
+        nodes[j].textContent = nodes[k].textContent;
+        nodes[k].textContent = temp;
+        nodes[k].style.color = 'green';
+        await new Promise(resolve => setTimeout(resolve, 1000)); 
+        await up(k);
+    }
+}
+async function fixTree() {
+    for (let i = num - 1; i >= 0; i--) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); 
+        await up(i);
+    }
+}
 
-function work() {
+function makeTree() {
     if (sta == 0) {
 
-        if (now < nodes.length) {
+        if (now < num) {
             // nodes[now].style.display = 'block';
             nodes[now].textContent = numbers[now];
             nodes[now].style.visibility = 'visible';
@@ -37,9 +59,10 @@ function work() {
         else {
             sta = 1;
             now--;
+            fixTree();
         }
     }
-    setTimeout(work, 1000);
+    if (sta == 0) setTimeout(makeTree, 0);
 }
 function getUserInput() {
     const input = prompt("请输入一些数，以逗号分隔:");
@@ -49,8 +72,9 @@ function getUserInput() {
     // console.log(numbers);
     // console.log(num);
     init();
-    work();
+
 }
 
 // 调用函数获取用户输入
 getUserInput();
+makeTree();
