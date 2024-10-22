@@ -19,6 +19,8 @@
             position: relative;
             width: 600px;
             height: 400px;
+            /* display: none; */
+            visibility: hidden;
         }
 
         .node {
@@ -47,6 +49,8 @@
             text-align: center;
             line-height: 30px;
             border-radius: 5px;
+            /* display: none; */
+            visibility: hidden;
         }
     </style>
 </head>
@@ -55,38 +59,38 @@
     <div class="tree">
         <!-- 节点 -->
         <g id="vertex">
-            <div class="node" id="node15" style="top: 240px; right: 6.25%; transform: translateX(50%);">15</div>
-            <div class="node" id="node14" style="top: 240px; right: 18.75%; transform: translateX(50%);">14</div>
-            <div class="node" id="node13" style="top: 240px; right: 31.25%; transform: translateX(50%);">13</div>
-            <div class="node" id="node12" style="top: 240px; right: 43.75%; transform: translateX(50%);">12</div>
-            <div class="node" id="node11" style="top: 240px; left: 43.75%; transform: translateX(-50%);">11</div>
-            <div class="node" id="node10" style="top: 240px; left: 31.25%; transform: translateX(-50%);">10</div>
-            <div class="node" id="node9" style="top: 240px; left: 18.75%; transform: translateX(-50%);">9</div>
-            <div class="node" id="node8" style="top: 240px; left: 6.25%; transform: translateX(-50%);">8</div>
-            <div class="node" id="node7" style="top: 160px; right: 12.5%; transform: translateX(50%);">7</div>
-            <div class="node" id="node6" style="top: 160px; right: 37.5%; transform: translateX(50%);">6</div>
-            <div class="node" id="node5" style="top: 160px; left: 37.5%; transform: translateX(-50%);">5</div>
-            <div class="node" id="node4" style="top: 160px; left: 12.5%; transform: translateX(-50%);">4</div>
-            <div class="node" id="node3" style="top: 80px; right: 25%; transform: translateX(50%);">3</div>
-            <div class="node" id="node2" style="top: 80px; left: 25%; transform: translateX(-50%);">2</div>
             <div class="node" id="node1" style="top: 0; left: 50%; transform: translateX(-50%);">1</div>
+            <div class="node" id="node2" style="top: 80px; left: 25%; transform: translateX(-50%);">2</div>
+            <div class="node" id="node3" style="top: 80px; right: 25%; transform: translateX(50%);">3</div>
+            <div class="node" id="node4" style="top: 160px; left: 12.5%; transform: translateX(-50%);">4</div>
+            <div class="node" id="node5" style="top: 160px; left: 37.5%; transform: translateX(-50%);">5</div>
+            <div class="node" id="node6" style="top: 160px; right: 37.5%; transform: translateX(50%);">6</div>
+            <div class="node" id="node7" style="top: 160px; right: 12.5%; transform: translateX(50%);">7</div>
+            <div class="node" id="node8" style="top: 240px; left: 6.25%; transform: translateX(-50%);">8</div>
+            <div class="node" id="node9" style="top: 240px; left: 18.75%; transform: translateX(-50%);">9</div>
+            <div class="node" id="node10" style="top: 240px; left: 31.25%; transform: translateX(-50%);">10</div>
+            <div class="node" id="node11" style="top: 240px; left: 43.75%; transform: translateX(-50%);">11</div>
+            <div class="node" id="node12" style="top: 240px; right: 43.75%; transform: translateX(50%);">12</div>
+            <div class="node" id="node13" style="top: 240px; right: 31.25%; transform: translateX(50%);">13</div>
+            <div class="node" id="node14" style="top: 240px; right: 18.75%; transform: translateX(50%);">14</div>
+            <div class="node" id="node15" style="top: 240px; right: 6.25%; transform: translateX(50%);">15</div>
         </g>
         <!-- 边 -->
-        <svg width="600" height="400">
-            <line id="line1" x1="47%" y1="40px" x2="25%" y2="80px" stroke="black" stroke-width="1" />
-            <line id="line2" x1="53%" y1="40px" x2="75%" y2="80px" stroke="black" stroke-width="1" />
-            <line id="line3" x1="25%" y1="100px" x2="12.5%" y2="160px" stroke="black" stroke-width="1" />
-            <line id="line4" x1="25%" y1="100px" x2="37.5%" y2="160px" stroke="black" stroke-width="1" />
-            <line id="line5" x1="75%" y1="100px" x2="62.5%" y2="160px" stroke="black" stroke-width="1" />
-            <line id="line6" x1="75%" y1="100px" x2="87.5%" y2="160px" stroke="black" stroke-width="1" />
-            <line id="line7" x1="12.5%" y1="160px" x2="6.25%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line8" x1="12.5%" y1="160px" x2="18.75%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line9" x1="37.5%" y1="160px" x2="31.25%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line10" x1="37.5%" y1="160px" x2="43.75%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line11" x1="62.5%" y1="160px" x2="56.25%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line12" x1="62.5%" y1="160px" x2="68.75%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line13" x1="87.5%" y1="160px" x2="81.25%" y2="240px" stroke="black" stroke-width="1" />
-            <line id="line14" x1="87.5%" y1="160px" x2="93.75%" y2="240px" stroke="black" stroke-width="1" />
+        <svg class="lines" width="600" height="400">
+            <line class="line" x1="47%" y1="40px" x2="25%" y2="80px" stroke="black" stroke-width="1" />
+            <line class="line" x1="53%" y1="40px" x2="75%" y2="80px" stroke="black" stroke-width="1" />
+            <line class="line" x1="25%" y1="100px" x2="12.5%" y2="160px" stroke="black" stroke-width="1" />
+            <line class="line" x1="25%" y1="100px" x2="37.5%" y2="160px" stroke="black" stroke-width="1" />
+            <line class="line" x1="75%" y1="100px" x2="62.5%" y2="160px" stroke="black" stroke-width="1" />
+            <line class="line" x1="75%" y1="100px" x2="87.5%" y2="160px" stroke="black" stroke-width="1" />
+            <line class="line" x1="12.5%" y1="160px" x2="6.25%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="12.5%" y1="160px" x2="18.75%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="37.5%" y1="160px" x2="31.25%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="37.5%" y1="160px" x2="43.75%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="62.5%" y1="160px" x2="56.25%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="62.5%" y1="160px" x2="68.75%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="87.5%" y1="160px" x2="81.25%" y2="240px" stroke="black" stroke-width="1" />
+            <line class="line" x1="87.5%" y1="160px" x2="93.75%" y2="240px" stroke="black" stroke-width="1" />
         </svg>
     </div>
     <div class="elements">
@@ -106,6 +110,7 @@
         <div class="element" id="element14">14</div>
         <div class="element" id="element15">15</div>
     </div>
+    <script src="script.js"></script>
 </body>
 
 </html>
