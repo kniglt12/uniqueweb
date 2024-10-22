@@ -1,8 +1,9 @@
 // 获取用户输入的数，以逗号分隔
 let numbers = [];
 let num = 0;
-let sta = 0;
+let step = 0;
 let now = 0;
+let working = 0;
 //显示输入的数
 const elements = document.querySelectorAll('.element');
 const nodes = document.querySelectorAll('.node');
@@ -14,14 +15,25 @@ function delay(ms) {
 }
 
 function init() {
+    now = 0;
+    step = 0;
+    working = 0;
     elements.forEach((element, index) => {
         if (index < numbers.length) {
             element.style.display = 'block';
+            element.style.backgroundColor = 'blue';
             element.textContent = numbers[index];
         } else {
             element.style.display = 'none';
         }
         element.style.visibility = 'visible';
+    });
+    nodes.forEach((node, index) => {
+        node.style.backgroundColor = 'red';
+        node.style.visibility = 'hidden';
+    });
+    lens.forEach((line, index) => {
+        line.style.visibility = 'hidden';
     });
 }
 
@@ -125,7 +137,6 @@ async function getMax() {
     await delay(1);
     await down(0);
     now--;
-    if (now >= 0) await getMax();
 }
 
 async function move1(now) {
@@ -155,18 +166,16 @@ async function move1(now) {
     });
 }
 async function makeTree() {
-    if (sta == 0) {
-        if (now < num) {
-            await move1(now);
-            now++;
-        } else {
-            sta = 1;
-            now--;
+    if (now < num) {
+        await move1(now);
+        now++;
+    } else {
+        sta = 1;
+        now--;
 
-            await fixTree();
-        }
+        return;
     }
-    if (sta == 0) await makeTree();
+    await makeTree();
 }
 
 function getUserInput() {
@@ -177,16 +186,46 @@ function getUserInput() {
         numbers = [12, 3, 7, 1, 15, 10, 5, 8, 14, 2, 6, 11, 9, 4, 13];
         num = numbers.length;
     }
-    init();
 }
 
 // 调用函数获取用户输入
 async function main() {
     getUserInput();
-    await delay(1000);
-    await makeTree();
-    await getMax();
-    console.log('done');
+
+    document.querySelector('#start').addEventListener('click', async () => {
+        init();
+
+        document.querySelector('#next').addEventListener('click', async () => {
+            if (working) return;
+
+            working = 1;
+            if (step == 0) {
+                await makeTree();
+                working = 0;
+                step = 1;
+            }
+            else if (step == 1) {
+
+                await fixTree();
+                working = 0;
+                step = 2;
+            }
+            else if (step >= 2) {
+                if (now < 0) {
+                    working = 0;
+                    step = -1;
+                    return;
+                }
+                await getMax();
+                working = 0;
+                step++;
+            }
+        });
+        document.querySelector('#reset').addEventListener('click', async () => {
+            if (working) return;
+            init();
+        });
+    });
 }
 
 main();
