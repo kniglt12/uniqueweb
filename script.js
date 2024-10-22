@@ -57,12 +57,8 @@ async function up(j) {
     if (j == 0) return;
     let k = Math.floor((j - 1) / 2);
     if (parseInt(nodes[j].textContent) > parseInt(nodes[k].textContent)) {
+        await (delay(1));
         await swapWithAnimation(k, j);
-        nodes[k].style.color = 'green';
-        nodes[j].style.color = 'green';
-        // await delay(500); // 等待0.5秒
-        nodes[k].style.color = 'white';
-        nodes[j].style.color = 'white';
         await up(k);
     }
 }
@@ -81,7 +77,6 @@ async function down(j) {
 async function fixTree() {
     for (let i = num - 1; i >= 0; i--) {
         await up(i);
-        // await delay(500); // 等待0.5秒
     }
     console.log('fixTree');
 }
@@ -89,17 +84,10 @@ async function fixTree() {
 async function getMax() {
     await delay(1000);
     await swapWithAnimation(0, now);
-    nodes[0].style.color = 'green';
-    nodes[now].style.color = 'green';
-    console.log(now);
-    // await delay(1000); // 等待1秒
-    nodes[0].style.color = 'white';
-    nodes[now].style.color = 'white';
     if (now > 0) lens[now - 1].style.visibility = 'hidden';
     nodes[now].style.visibility = 'hidden';
     elements[now].textContent = nodes[now].textContent;
     elements[now].style.visibility = 'visible';
-    // await delay(1000); // 等待1秒
     await down(0);
     now--;
     if (now >= 0) await getMax();
