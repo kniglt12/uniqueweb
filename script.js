@@ -25,20 +25,42 @@ function init() {
     });
 }
 
-function swap(i, j) {
-    let temp = nodes[i].textContent;
-    nodes[i].textContent = nodes[j].textContent;
-    nodes[j].textContent = temp;
+async function swapWithAnimation(i, j) {
+    return new Promise(resolve => {
+        const rectI = nodes[i].getBoundingClientRect();
+        const rectJ = nodes[j].getBoundingClientRect();
+        const deltaX = rectJ.left - rectI.left;
+        const deltaY = rectJ.top - rectI.top;
+        // console.log(i, j);
+        nodes[i].style.transition = 'transform 1s';
+        nodes[j].style.transition = 'transform 1s';
+        nodes[i].style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        nodes[j].style.transform = `translate(${-deltaX}px, ${-deltaY}px)`;
+
+        nodes[i].addEventListener('transitionend', () => {
+            nodes[i].style.transition = '';
+            nodes[j].style.transition = '';
+            nodes[i].style.transform = '';
+            nodes[j].style.transform = '';
+
+            // 交换内容
+            let temp = nodes[i].textContent;
+            nodes[i].textContent = nodes[j].textContent;
+            nodes[j].textContent = temp;
+
+            resolve();
+        }, { once: true });
+    });
 }
 
 async function up(j) {
     if (j == 0) return;
     let k = Math.floor((j - 1) / 2);
     if (parseInt(nodes[j].textContent) > parseInt(nodes[k].textContent)) {
-        swap(k, j);
+        await swapWithAnimation(k, j);
         nodes[k].style.color = 'green';
         nodes[j].style.color = 'green';
-        await delay(500); // 等待1秒
+        // await delay(500); // 等待0.5秒
         nodes[k].style.color = 'white';
         nodes[j].style.color = 'white';
         await up(k);
@@ -50,13 +72,8 @@ async function down(j) {
     if (k >= now) return;
     if (k + 1 < now && parseInt(nodes[k].textContent) < parseInt(nodes[k + 1].textContent)) k++;
     if (parseInt(nodes[j].textContent) < parseInt(nodes[k].textContent)) {
-        swap(j, k);
-        // console.log(j, k);
-        nodes[k].style.color = 'green';
-        nodes[j].style.color = 'green';
-        await delay(500); // 等待1秒
-        nodes[j].style.color = 'white';
-        nodes[k].style.color = 'white';
+        await (delay(1));
+        await swapWithAnimation(j, k);
         await down(k);
     }
 }
@@ -64,26 +81,25 @@ async function down(j) {
 async function fixTree() {
     for (let i = num - 1; i >= 0; i--) {
         await up(i);
-        await delay(0); // 等待1秒
+        // await delay(500); // 等待0.5秒
     }
     console.log('fixTree');
 }
 
 async function getMax() {
-
     await delay(1000);
-    swap(0, now);
+    await swapWithAnimation(0, now);
     nodes[0].style.color = 'green';
     nodes[now].style.color = 'green';
     console.log(now);
-    await delay(1000); // 等待1秒
+    // await delay(1000); // 等待1秒
     nodes[0].style.color = 'white';
     nodes[now].style.color = 'white';
     if (now > 0) lens[now - 1].style.visibility = 'hidden';
     nodes[now].style.visibility = 'hidden';
     elements[now].textContent = nodes[now].textContent;
     elements[now].style.visibility = 'visible';
-    await delay(1000); // 等待1秒
+    // await delay(1000); // 等待1秒
     await down(0);
     now--;
     if (now >= 0) await getMax();
